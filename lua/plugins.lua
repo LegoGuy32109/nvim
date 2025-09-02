@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: undefined-global vim is vim man
 local vim = vim
 
 return {
@@ -12,7 +13,15 @@ return {
    -- {
    --    "williamboman/mason-lspconfig.nvim",
    --    config = function()
-   --       require("mason-lspconfig").setup()
+   --       require("mason-lspconfig").setup({
+   --          ensure_installed = {
+   --             "lua_ls",
+   --             "tailwindcss",
+   --             "denols",
+   --             -- "ts"
+   --          },
+   --          automatic_installation = true,
+   --       })
    --    end
    -- },
    {

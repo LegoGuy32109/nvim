@@ -38,18 +38,13 @@ vim.keymap.set("n", "<leader>e", function()
    vim.diagnostic.open_float(nil, { scope = "line", focus = false, border = "rounded" })
 end, { desc = "Show line diagnostics", silent = true })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
--- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Goto Definition" })
--- vim.keymap.set("n", "gr", vim.lsp.buf.references, { desc = "Goto References" })
--- vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover Documentation" })
--- vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename Symbol" })
--- vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
    vim.fn.system({
       "git", "clone", "--filter=blob:none",
-      "https://github.com/folke/lazy.nvim.git", "--branch=stable",
+      "https://github.com/folke/lazy.nvim.git", "--branch=stable", lazypath
    })
 end
 vim.opt.rtp:prepend(lazypath)
@@ -60,7 +55,9 @@ require("lazy").setup("plugins")
 -- Telescope keymaps (after plugins load)
 local ok, tb = pcall(require, "telescope.builtin")
 if ok then
-   vim.keymap.set("n", "<leader>ff", tb.find_files, { desc = "Find Files" })
+   vim.keymap.set("n", "<leader>ff", function()
+      tb.find_files()
+   end, { desc = "Find Files" })
    vim.keymap.set("n", "<leader>fg", tb.live_grep, { desc = "LiveGrep" })
    vim.keymap.set("n", "<leader>fb", tb.buffers, { desc = "Find Buffers" })
    vim.keymap.set("n", "<leader>fh", tb.help_tags, { desc = "Find Help" })
