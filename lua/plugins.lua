@@ -1,46 +1,15 @@
----@diagnostic disable-next-line: undefined-global vim is vim man
-local vim = vim
+local mapMaker = function(bufnr)
+   return function(mode, lhs, rhs, desc)
+      vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+   end
+end
 
 return {
-   -- Mason & deps
    {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
       build = ":MasonUpdate",
       config = function()
-         require("mason").setup()
-      end
-   },
-   -- {
-   --    "williamboman/mason-lspconfig.nvim",
-   --    config = function()
-   --       require("mason-lspconfig").setup({
-   --          ensure_installed = {
-   --             "lua_ls",
-   --             "tailwindcss",
-   --             "denols",
-   --             -- "ts"
-   --          },
-   --          automatic_installation = true,
-   --       })
-   --    end
-   -- },
-   {
-      "neovim/nvim-lspconfig",
-      dependencies = { 'saghen/blink.cmp' },
-      opts = {
-         servers = {
-            lua_ls = {},
-            tailwindcss = {},
-            denols = {}
-         }
-      },
-      config = function(_, opts)
-         for server, config in pairs(opts.servers) do
-            -- passing in config.capabilities merges with existing capabilities
-            -- if I defined it
-            config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-            vim.lsp.enable(server)
-         end
+         require("mason").setup({ PATH = "prepend" })
       end
    },
    {
@@ -141,15 +110,40 @@ return {
 
    {
       'saghen/blink.cmp',
-      dependencies = 'rafamadriz/friendly-snippets',
+      dependencies = { { 'L3MON4D3/LuaSnip', version = 'v2.*' }, 'moyiz/blink-emoji.nvim', 'Kaiser-Yang/blink-cmp-dictionary' },
       version = '1.*',
+      ---@module 'blink.cmp'
+      ---@type 'blink.cmp.Config'
+      ---@diagnostic disable-next-line: assign-type-mismatch it's fine bro
       opts = {
          keymap = { preset = 'default' },
          appearance = {
-            use_nvim_cmp_as_default = true,
+            use_nvim_cmp_as_default = false,
             nerd_font_variant = 'mono'
          },
          signature = { enabled = true },
+         snippets = { preset = "luasnip" },
+         completion = { documentation = { auto_show = false } },
+         sources = {
+            default = { "lsp", "path", "snippets", "buffer", "emoji" },
+            providers = {
+               cmdline = {
+                  min_keyword_length = 2,
+               },
+               emoji = {
+                  module = "blink-emoji",
+                  name = "Emoji",
+                  score_offset = 15, -- Tune by preference
+                  opts = {
+                     insert = true,  -- Insert emoji (default) or complete its name
+                     ---@type string|table|fun():table
+                     trigger = function()
+                        return { ":" }
+                     end,
+                  },
+               }
+            }
+         }
       }
    },
 
@@ -184,9 +178,7 @@ return {
             current_line_blame = true, -- show blame inline
             on_attach = function(bufnr)
                local gs = package.loaded.gitsigns
-               local map = function(mode, lhs, rhs, desc)
-                  vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-               end
+               local map = mapMaker(bufnr)
                -- hunk navigation
                map("n", "]c",
                   function()
@@ -209,6 +201,7 @@ return {
                map("n", "<leader>hp", gs.preview_hunk, "Preview hunk")
                map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, "Blame line")
                map("n", "<leader>hd", gs.diffthis, "Diff against index")
+               map("n", "<leader>td", gs.toggle_deleted, "Toggle deleted lines")
             end,
          })
       end,
@@ -220,6 +213,36 @@ return {
       keys = {
          { "<leader>lg", "<cmd>LazyGit<cr>", desc = "Open LazyGit" }
       }
+   },
+   -- Nvim-tree for file explorer
+   {
+      "nvim-tree/nvim-tree.lua",
+      lazy = false,
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      opts = {
+         sort = {
+            sorter = "case_sensitive",
+         },
+         view = {
+            width = 50,
+         },
+         renderer = {
+            group_empty = true,
+         },
+         filters = {
+            dotfiles = false,
+         },
+         on_attach = function(bufnr)
+            local api = require('nvim-tree.api')
+            -- default mappings
+            api.config.mappings.default_on_attach(bufnr)
+         end
+      },
+      config = function(_, opts)
+         require("nvim-tree").setup(opts)
+         vim.keymap.set("n", "<leader>e", '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+         vim.keymap.set("n", "<leader>o", '<cmd>NvimTreeFocus<CR>', { desc = 'Focus NvimTree' })
+      end,
    },
 
    {

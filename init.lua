@@ -1,12 +1,13 @@
----@diagnostic disable-next-line: undefined-global vim is vim man
-local vim = vim
-
+-- disable netrw
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 -- Leader <space>
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.g.markdown_fenced_languages = {
    "ts=typescript"
 }
+vim.g.have_nerd_font = true
 
 -- Some defaults
 vim.opt.number = true
@@ -17,13 +18,33 @@ vim.opt.tabstop = 3
 vim.opt.shiftwidth = 3
 vim.opt.softtabstop = 3
 vim.opt.expandtab = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+vim.opt.listchars = {
+   tab = '▏ ',
+   leadmultispace = '▏ ',
+   trail = '￮',
+   multispace = '￮',
+   lead = '\\',
+   extends = '▶',
+   precedes = '◀',
+   nbsp = '‿'
+}
+
+vim.o.winborder = 'rounded'
 
 -- vim.keymap.set("n", "<C-'>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
 vim.keymap.set("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 -- paste what was last yanked
-vim.keymap.set("n", "<leader>p", '"0p', { desc = "Paste last yank" })
-vim.keymap.set("n", "<leader>P", '"0P', { desc = "Paste last yank before" })
-vim.keymap.set("x", "<leader>p", '"0P', { desc = "Paste last yank" })
+vim.keymap.set("n", "<leader>p", '"+p', { desc = "Paste System Clipboard" })
+vim.keymap.set("n", "<leader>P", '"+P', { desc = "Paste System Clipboard before" })
+vim.keymap.set("x", "<leader>p", '"+p', { desc = "Paste System Clipboard" })
+vim.keymap.set("n", "<leader><C-p>", '"0p', { desc = "Paste last yank" })
+vim.keymap.set("n", "<leader><C-P>", '"0P', { desc = "Paste last yank before" })
+vim.keymap.set("x", "<leader><C-p>", '"0p', { desc = "Paste last yank" })
+-- yank into system clipboard
+vim.keymap.set("n", "<leader>y", '"+y', { desc = "Yank to System Clipboard" })
+vim.keymap.set("x", "<leader>y", '"+y', { desc = "Yank to System Clipboard" })
 -- recenter screen after movement / jump
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -31,10 +52,12 @@ vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
 vim.diagnostic.config({
+   virtual_text = { current_line = true },
+   virtual_lines = { current_line = true },
    float = { border = "rounded" },
    severity_sort = true,
 })
-vim.keymap.set("n", "<leader>e", function()
+vim.keymap.set("n", "<leader>E", function()
    vim.diagnostic.open_float(nil, { scope = "line", focus = false, border = "rounded" })
 end, { desc = "Show line diagnostics", silent = true })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
@@ -51,6 +74,15 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Load plugins
 require("lazy").setup("plugins")
+vim.lsp.enable({
+   "biome",
+   -- "denols",
+   -- "jsonls",
+   "luals",
+   -- "tailwindcss",
+   "vtsls",
+})
+vim.keymap.set("n", "<leader>ls", "<cmd>checkhealth lsp<CR>", { desc = "LspInfo" })
 
 -- Telescope keymaps (after plugins load)
 local ok, tb = pcall(require, "telescope.builtin")
@@ -76,20 +108,23 @@ vim.api.nvim_create_autocmd('LspAttach', {
       map('gd', telescope.lsp_definitions, 'Goto Definition')
       map('<leader>fs', telescope.lsp_document_symbols, 'Doc Symbols')
       map('<leader>fS', telescope.lsp_dynamic_workspace_symbols, 'Dynamic Symbols')
-      map('gt', telescope.lsp_type_definitions, 'Goto Type')
+      map('<leader>gt', telescope.lsp_type_definitions, 'Goto Type')
       map('<leader>fR', telescope.lsp_references, 'Goto References')
       map('<leader>fi', telescope.lsp_implementations, 'Goto Impl')
 
       map('K', vim.lsp.buf.hover, 'hover')
-      map('<leader>e', vim.diagnostic.open_float, 'diagnostic')
       map('<leader>k', vim.lsp.buf.signature_help, 'sig help')
       map('<leader>rn', vim.lsp.buf.rename, 'rename')
       map('<leader>ca', vim.lsp.buf.code_action, 'code action')
       map('<leader>m', vim.lsp.buf.format, 'format')
 
-      vim.keymap.set('v', '<leader>ca',
-         vim.lsp.buf.code_action, { buffer = ev.buf, desc = 'Lsp: code_action' })
+      vim.keymap.set('v', '<leader>ca', function()
+         -- range does not work :(
+         -- local row = vim.api.nvim_win_get_cursor(0)[1]
+         -- local text = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1] or ''
+         vim.lsp.buf.code_action({
+            -- range = { start = { row, 0 }, ['end'] = { row, #text } }
+         })
+      end, { buffer = ev.buf, desc = 'Lsp: code_action', })
    end
 })
-
--- require("config.lsp")
