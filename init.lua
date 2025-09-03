@@ -10,6 +10,7 @@ vim.g.markdown_fenced_languages = {
 vim.g.have_nerd_font = true
 
 -- Some defaults
+vim.o.swapfile = false
 vim.opt.number = true
 vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
@@ -60,7 +61,7 @@ vim.diagnostic.config({
 vim.keymap.set("n", "<leader>E", function()
    vim.diagnostic.open_float(nil, { scope = "line", focus = false, border = "rounded" })
 end, { desc = "Show line diagnostics", silent = true })
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Open diagnostics list" })
+vim.keymap.set("n", "<leader>d", vim.diagnostic.setqflist, { desc = "Open [D]iagnostics list" })
 
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -83,6 +84,12 @@ vim.lsp.enable({
    "vtsls",
 })
 vim.keymap.set("n", "<leader>ls", "<cmd>checkhealth lsp<CR>", { desc = "LspInfo" })
+vim.keymap.set("n", "<leader>w", "<cmd>update<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>W", "<cmd>wa<CR>", { desc = "Save all files" })
+vim.keymap.set("n", "<leader>q", "<cmd>qa<CR>", { desc = "Exit neovim" })
+vim.keymap.set("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Force Exit neovim" })
+vim.keymap.set("n", "<leader>x", "<cmd>q<CR>", { desc = "Exit file" })
+vim.keymap.set("n", "<leader>X", "<cmd>q!<CR>", { desc = "Force Exit file" })
 
 -- Telescope keymaps (after plugins load)
 local ok, tb = pcall(require, "telescope.builtin")
@@ -115,16 +122,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
       map('K', vim.lsp.buf.hover, 'hover')
       map('<leader>k', vim.lsp.buf.signature_help, 'sig help')
       map('<leader>rn', vim.lsp.buf.rename, 'rename')
-      map('<leader>ca', vim.lsp.buf.code_action, 'code action')
-      map('<leader>m', vim.lsp.buf.format, 'format')
 
-      vim.keymap.set('v', '<leader>ca', function()
+      vim.keymap.set({ 'v', 'x', 'n' }, '<leader>ca', function()
          -- range does not work :(
-         -- local row = vim.api.nvim_win_get_cursor(0)[1]
-         -- local text = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1] or ''
-         vim.lsp.buf.code_action({
-            -- range = { start = { row, 0 }, ['end'] = { row, #text } }
-         })
+         local row = vim.api.nvim_win_get_cursor(0)[1]
+         local text = vim.api.nvim_buf_get_lines(0, row - 1, row, true)[1] or ''
+         local range = { start = { row, 0 }, ['end'] = { row, #text } }
+         print(range)
+         vim.lsp.buf.code_action({ range })
       end, { buffer = ev.buf, desc = 'Lsp: code_action', })
    end
 })

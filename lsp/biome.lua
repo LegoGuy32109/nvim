@@ -1,5 +1,5 @@
 return {
-   cmd = { "biome",  "lsp-proxy" },
+   cmd = { "biome", "lsp-proxy" },
    filetypes = {
       "javascript", "javascriptreact", "javascript.jsx",
       "typescript", "typescriptreact", "typescript.tsx",

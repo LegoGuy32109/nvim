@@ -16,9 +16,15 @@ return {
       "stevearc/conform.nvim",
       config = function()
          require("conform").setup({
+            formatters = {
+               biome = {
+                  args = { "format", "--stdin-file-path", "$FILENAME" },
+                  stdin = true,
+               }
+            },
             formatters_by_ft = {
                lua = { "stylua" },
-               -- typescript = { "deno_fmt" },
+               typescript = { "biome" },
             },
          })
          vim.keymap.set("n", "<leader>m", function()
@@ -158,7 +164,11 @@ return {
                registers = true,
                spelling = { enabled = true },
             },
-            window = { border = "rounded" }
+            win = { border = "rounded" },
+            -- tired of seeing :checkhealth which-key on startup every time
+            disable = {
+               checkhealth = true
+            }
          })
       end
    },
@@ -192,7 +202,7 @@ return {
                      vim.schedule(gs.prev_hunk)
                      return "<Ignore>"
                   end, "Prev hunk")
-               -- actions
+               -- normal actions
                map("n", "<leader>hs", gs.stage_hunk, "Stage hunk")
                map("n", "<leader>hr", gs.reset_hunk, "Reset hunk")
                map("n", "<leader>hS", gs.stage_buffer, "Stage buffer")
@@ -202,6 +212,9 @@ return {
                map("n", "<leader>hb", function() gs.blame_line({ full = true }) end, "Blame line")
                map("n", "<leader>hd", gs.diffthis, "Diff against index")
                map("n", "<leader>td", gs.toggle_deleted, "Toggle deleted lines")
+               -- visual actions
+               map('v', '<leader>hs', '<cmd>Gitsigns stage_hunk<CR>', 'Stage Hunk')
+               map('v', '<leader>hr', '<cmd>Gitsigns reset_hunk<CR>', 'Reset Hunk')
             end,
          })
       end,

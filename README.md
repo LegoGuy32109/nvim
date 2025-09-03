@@ -16,6 +16,9 @@ sudo ln -sf $(command -v fdfind) /usr/local/bin/fd
 curl -fsSL https://deno.land/x/install/install.sh | sh
 # zoxide
 curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+# fuzzy finder for zoxide
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install
 
 # lazygit
 LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
