@@ -25,6 +25,15 @@ sudo install lazygit -D -t /usr/local/bin/
 
 # rust
 rustup default stable
+
+# Download and install nvm:
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+\. "$HOME/.nvm/nvm.sh"
+nvm install 24
+
+# stuff for lsps
+npm -g i @biomejs/biome
+npm -g i @vtsls/language-server
 ```
 
 # .bashrc 
