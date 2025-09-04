@@ -253,7 +253,7 @@ return {
       },
       config = function(_, opts)
          require("nvim-tree").setup(opts)
-         vim.keymap.set("n", "<leader>e", '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle NvimTree' })
+         vim.keymap.set("n", "<leader>e", '<cmd>NvimTreeFindFileToggle<CR>', { desc = 'Toggle NvimTree' })
          vim.keymap.set("n", "<leader>o", '<cmd>NvimTreeFocus<CR>', { desc = 'Focus NvimTree' })
       end,
    },

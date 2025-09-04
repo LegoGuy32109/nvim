@@ -34,6 +34,19 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 \. "$HOME/.nvm/nvm.sh"
 nvm install 24
 
+# puppeteer setup
+sudo apt-get update
+sudo apt-get install -y \
+  libnss3 libnspr4 \
+  libatk-bridge2.0-0 libatk1.0-0 \
+  libgtk-3-0 libx11-xcb1 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+  libxcb1 libxkbcommon0 libxshmfence1 \
+  libdrm2 libgbm1 \
+  libasound2 \
+  libglib2.0-0 libpango-1.0-0 libpangocairo-1.0-0 \
+  fonts-liberation ca-certificates xdg-utils wget
+npx puppeteer install chrome
+
 # stuff for lsps
 npm -g i @biomejs/biome
 npm -g i @vtsls/language-server
@@ -46,4 +59,6 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 eval "$(zoxide init bash)"
+
+export GEOH_SHARED_ENVIRONMENT_DIRECTORY="/mnt/c/Users/Josh/GOGEOH/Engineering - Documents/Environments"
 ```
