@@ -20,11 +20,28 @@ return {
                biome = {
                   args = { "format", "--stdin-file-path", "$FILENAME" },
                   stdin = true,
+               },
+               deno = {
+                  command = "deno",
+                  stdin = true,
+                  args = function(_, ctx)
+                     local ext = (ctx.filename or ""):match("%.([%w]+)$") or ""
+                     return { "fmt", "-", "--ext", ext }
+                  end
                }
             },
             formatters_by_ft = {
                lua = { "stylua" },
-               typescript = { "biome" },
+               javascript = { "deno" },
+               typescript = { "deno" },
+               javascriptreact = { "deno" },
+               typescriptreact = { "deno" },
+               json = { "deno" },
+               jsonc = { "deno" },
+               markdown = { "deno" },
+               css = { "deno" },
+               toml = { "deno" },
+
             },
          })
          vim.keymap.set("n", "<leader>m", function()
