@@ -8,6 +8,15 @@ local config = wezterm.config_builder()
 config.default_domain = "WSL:Ubuntu"
 config.color_scheme = "Catppuccin Mocha"
 
+config.underline_thickness = "1pt"
+config.underline_position = "-2pt"
+config.force_reverse_video_cursor = true
+
+config.font = wezterm.font("0xProto Nerd Font Mono")
+config.font_size = 14
+config.harfbuzz_features = { "calt=1", "clig=1", "liga=1", }
+
+
 -- config.default_prog = { "powershell.exe " }
 
 -- local mux = wezterm.mux

@@ -4,12 +4,11 @@ vim.g.loaded_netrwPlugin = 1
 -- Leader <space>
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-vim.g.markdown_fenced_languages = {
-   "ts=typescript"
-}
+vim.g.markdown_fenced_languages = { "ts=typescript" }
 vim.g.have_nerd_font = true
 
 -- Some defaults
+vim.o.winborder = 'rounded'
 vim.o.swapfile = false
 vim.opt.number = true
 vim.opt.termguicolors = true
@@ -31,10 +30,9 @@ vim.opt.listchars = {
    precedes = '◀',
    nbsp = '‿'
 }
+vim.opt.spell = true
+vim.opt.spelllang = { "en_us" }
 
-vim.o.winborder = 'rounded'
-
--- vim.keymap.set("n", "<C-'>", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
 vim.keymap.set("i", "jk", "<Esc>", { desc = "Exit insert mode" })
 -- paste what was last yanked
 vim.keymap.set("n", "<leader>p", '"+p', { desc = "Paste System Clipboard" })
@@ -51,6 +49,8 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "}", "}zzzv")
+vim.keymap.set("n", "{", "{zzzv")
 
 vim.diagnostic.config({
    virtual_text = { current_line = true },
@@ -84,6 +84,17 @@ vim.lsp.enable({
 })
 vim.keymap.set("n", "<leader>ls", "<cmd>checkhealth lsp<CR>", { desc = "LspInfo" })
 vim.keymap.set("n", "<leader>w", "<cmd>update<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>s", function()
+   require('conform').format({
+      async = true,
+      lsp_fallback = true,
+      timeout_ms = 2000,
+   }, function(err)
+      if not err then
+         vim.cmd("update")
+      end
+   end)
+end, { desc = "Format and Save file", remap = true })
 vim.keymap.set("n", "<leader>W", "<cmd>wa<CR>", { desc = "Save all files" })
 vim.keymap.set("n", "<leader>q", "<cmd>qa<CR>", { desc = "Exit neovim" })
 vim.keymap.set("n", "<leader>Q", "<cmd>qa!<CR>", { desc = "Force Exit neovim" })
@@ -105,6 +116,9 @@ if ok then
    vim.keymap.set("n", "<leader>fh", tb.help_tags, { desc = "Find Help" })
    vim.keymap.set("n", "<leader>fr", tb.resume, { desc = "Resume Search" })
    vim.keymap.set("n", "<leader>fo", tb.oldfiles, { desc = "Find Old Files" })
+   vim.keymap.set("n", "zs", function()
+      tb.spell_suggest(require("telescope.themes").get_cursor({}))
+   end, { desc = "Spell Suggetions" })
 end
 
 vim.api.nvim_create_autocmd('LspAttach', {
@@ -136,3 +150,9 @@ vim.api.nvim_create_autocmd('LspAttach', {
       end, { buffer = ev.buf, desc = 'Lsp: code_action', })
    end
 })
+
+-- highlight groups for spelling
+vim.api.nvim_set_hl(0, "SpellBad", { undercurl = true, sp = "Red" })
+vim.api.nvim_set_hl(0, "SpellCap", { undercurl = true, sp = "Orange" })
+vim.api.nvim_set_hl(0, "SpellLocal", { undercurl = true, sp = "Yellow" })
+vim.api.nvim_set_hl(0, "SpellRare", { undercurl = true, sp = "Cyan" })
