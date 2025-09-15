@@ -27,7 +27,7 @@ return {
       if is_deno_proj then return nil end
       -- Typical TS roots
       local biome_root = find_root(fname,
-         { { "biome.json", "biome.jsonc" }, { "package.json", "tsconfig.json", "jsconfig.json" } })
+         { "biome.json", "biome.jsonc", "package.json", "tsconfig.json", "jsconfig.json" })
       local root = biome_root or vim.fn.getcwd()
       on_dir(root)
    end,

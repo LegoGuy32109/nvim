@@ -79,7 +79,7 @@ vim.lsp.enable({
    "biome",
    "denols",
    "luals",
-   "tailwindcss",
+   -- "tailwindcss",
    "vtsls",
 })
 vim.keymap.set("n", "<leader>ls", "<cmd>checkhealth lsp<CR>", { desc = "LspInfo" })
