@@ -14,6 +14,7 @@ return {
       { "tailwind.config.js", "tailwind.config.ts" },
       { "postcss.config.js",  "postcss.config.ts" },
       "package.json",
+      "deno.json",
       "node_modules",
       ".git",
    },

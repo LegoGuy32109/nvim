@@ -41,7 +41,6 @@ return {
                markdown = { "deno" },
                css = { "deno" },
                toml = { "deno" },
-
             },
          })
          vim.keymap.set("n", "<leader>m", function()
