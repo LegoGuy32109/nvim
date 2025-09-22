@@ -13,7 +13,7 @@ config.underline_position = "-2pt"
 config.force_reverse_video_cursor = true
 
 config.font = wezterm.font("0xProto Nerd Font Mono")
-config.font_size = 14
+config.font_size = 11
 config.harfbuzz_features = { "calt=1", "clig=1", "liga=1", }
 
 

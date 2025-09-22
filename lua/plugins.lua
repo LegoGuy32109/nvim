@@ -43,9 +43,9 @@ return {
                toml = { "deno" },
             },
          })
-         vim.keymap.set("n", "<leader>m", function()
+         vim.keymap.set("n", "<leader>n", function()
             require("conform").format({ async = true, lsp_fallback = true })
-         end, { desc = "For[M]at buffer" })
+         end, { desc = "For[N]at buffer" })
       end
    },
    -- UI for showing progress
