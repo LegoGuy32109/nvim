@@ -76,11 +76,11 @@ vim.opt.rtp:prepend(lazypath)
 -- Load plugins
 require("lazy").setup("plugins")
 vim.lsp.enable({
-   "biome",
-   "denols",
    "luals",
-   -- "tailwindcss",
+   "denols",
+   "tailwindcss",
    "vtsls",
+   "biome",
 })
 vim.keymap.set("n", "<leader>ls", "<cmd>checkhealth lsp<CR>", { desc = "LspInfo" })
 vim.keymap.set("n", "<leader>w", "<cmd>update<CR>", { desc = "Save file" })
@@ -89,10 +89,8 @@ vim.keymap.set("n", "<leader>s", function()
       async = true,
       lsp_fallback = true,
       timeout_ms = 2000,
-   }, function(err)
-      if not err then
-         vim.cmd("update")
-      end
+   }, function()
+      vim.cmd("update")
    end)
 end, { desc = "Format and Save file", remap = true })
 vim.keymap.set("n", "<leader>W", "<cmd>wa<CR>", { desc = "Save all files" })
